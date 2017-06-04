@@ -19,7 +19,7 @@ public class Arkanoid extends Thread {
         this.platform = platform;
         this.ball = ball;
         this.mapper = mapper;
-        gameSpeed = 10;
+        gameSpeed = 20;
         /*totalLinesCount = mapper.getLines().size();
         canChangeSpeed = false;*/
     }
@@ -38,14 +38,17 @@ public class Arkanoid extends Thread {
     public void checkPlatform() {
         if (ball.getY() == platform.getY() - ball.getSize() &&
                 ball.getX() >= platform.getX() - ball.getSize() &&
-                ball.getX() <= platform.getX() + platform.getWidth())
+                ball.getX() <= platform.getX() + platform.getWidth()) {
             ball.changeDirection(Direction.UP, null);
+            //ball.changeMoveAngle();
+        }
     }
 
     public void checkLines() {
         for (int i = 0; i < mapper.getLines().size(); i++) {
             //Удар шарика сверху
-            if (ball.getY() == mapper.getLines().get(i).getY() - ball.getSize() &&
+            if (ball.getY() >= mapper.getLines().get(i).getY() - ball.getSize() &&
+                    ball.getY() <= mapper.getLines().get(i).getY() &&
                     ball.getX() >= mapper.getLines().get(i).getX() - ball.getSize() &&
                     ball.getX() <= mapper.getLines().get(i).getX() + mapper.getLines().get(i).getWidth()) {
                 ball.changeDirection(Direction.UP, null);
@@ -53,7 +56,8 @@ public class Arkanoid extends Thread {
                 score += 10;
             } else
                 //Удар шарика снизу
-                if (ball.getY() == mapper.getLines().get(i).getY() + mapper.getLines().get(i).getHeight() &&
+                if (ball.getY() <= mapper.getLines().get(i).getY() + mapper.getLines().get(i).getHeight() &&
+                        ball.getY() >= mapper.getLines().get(i).getY() + mapper.getLines().get(i).getHeight() &&
                         ball.getX() >= mapper.getLines().get(i).getX() - ball.getSize() &&
                         ball.getX() <= mapper.getLines().get(i).getX() + mapper.getLines().get(i).getWidth()) {
                     ball.changeDirection(Direction.DOWN, null);
@@ -61,26 +65,24 @@ public class Arkanoid extends Thread {
                     score += 10;
                 } else
                     //Удар шарика справа
-                    if (ball.getX() == mapper.getLines().get(i).getX() + mapper.getLines().get(i).getWidth() &&
+                    if (ball.getX() <= mapper.getLines().get(i).getX() + mapper.getLines().get(i).getWidth() &&
+                            ball.getX() >= mapper.getLines().get(i).getX() + mapper.getLines().get(i).getWidth() &&
                             ball.getY() >= mapper.getLines().get(i).getY() - ball.getSize() &&
                             ball.getY() <= mapper.getLines().get(i).getY() + mapper.getLines().get(i).getHeight()) {
-                        ball.changeDirection(Direction.RIGHT, null);
+                        ball.changeDirection(null, Direction.RIGHT);
                         mapper.getLines().remove(i);
                         score += 10;
                     } else
                         //Удар шарика слева
-                        if (ball.getX() == mapper.getLines().get(i).getX() - ball.getSize() &&
+                        if (ball.getX() >= mapper.getLines().get(i).getX() - ball.getSize() &&
+                                ball.getX() <= mapper.getLines().get(i).getX() &&
                                 ball.getY() >= mapper.getLines().get(i).getY() - ball.getSize() &&
                                 ball.getY() <= mapper.getLines().get(i).getY() + mapper.getLines().get(i).getHeight()) {
-                            ball.changeDirection(Direction.LEFT, null);
+                            ball.changeDirection(null, Direction.LEFT);
                             mapper.getLines().remove(i);
                             score += 10;
                         }
         }
-    }
-
-    private void randomChangeDirection(){
-
     }
 
     /*private void speedUp() {

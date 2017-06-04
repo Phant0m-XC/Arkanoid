@@ -7,17 +7,19 @@ public class Ball {
     private int x;
     private int y;
     private int size;
-    private int speed;
+    private int speedX;
+    private int speedY;
     private JPanel panel;
-    private Direction vertical;
-    private Direction horizontal;
+    public Direction vertical;
+    public Direction horizontal;
 
     public Ball(JPanel panel, int x, int y) {
         size = 25;
         this.panel = panel;
         this.x = x - size;
         this.y = y - size;
-        speed = 5;
+        speedX = 5;
+        speedY = 5;
         vertical = Direction.UP;
         horizontal = Direction.RIGHT;
     }
@@ -30,25 +32,33 @@ public class Ball {
 
     public void go() {
         if (horizontal == Direction.RIGHT)
-            x += speed;
+            x += speedX;
         else if (horizontal == Direction.LEFT)
-            x -= speed;
+            x -= speedX;
         if (vertical == Direction.UP)
-            y -= speed;
+            y -= speedY;
         else if (vertical == Direction.DOWN)
-            y += speed;
+            y += speedY;
         checkBounds();
     }
 
     private void checkBounds() {
-        if (x == 1250 - size)
+        if (x >= 1250 - size) {
+            x = 1250 - size;
             changeDirection(vertical, Direction.LEFT);
-        if (x == 0)
+        }
+        if (x <= 0) {
+            x = 0;
             changeDirection(vertical, Direction.RIGHT);
-        if (y == 0)
+        }
+        if (y <= 0) {
+            y = 0;
             changeDirection(Direction.DOWN, horizontal);
-        if (y == 900 - size)
+        }
+        if (y >= 900 - size) {
+            y = 900 - size;
             changeDirection(Direction.STOP, Direction.STOP);
+        }
     }
 
     protected void changeDirection(Direction vertical, Direction horizontal) {
@@ -57,6 +67,12 @@ public class Ball {
         if (horizontal != null)
             this.horizontal = horizontal;
     }
+
+    //Изменение угла движения
+    /*protected void changeMoveAngle() {
+        speedX = (int) (Math.random() * 100 % 5 + 5);
+        speedY = (int) (Math.random() * 100 % 5 + 5);
+    }*/
 
     public int getX() {
         return x;

@@ -1,3 +1,5 @@
+package arkanoid;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;

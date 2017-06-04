@@ -1,3 +1,5 @@
+package arkanoid;
+
 import java.awt.*;
 
 public class Platform {

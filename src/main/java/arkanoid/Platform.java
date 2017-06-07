@@ -25,12 +25,12 @@ public class Platform {
 
     public void goLeft() {
         if (x > 0)
-            x -= 25;
+            x -= 35;
     }
 
     public void goRight() {
         if (x < 1250 - width)
-            x += 25;
+            x += 35;
     }
 
     public int getX() {

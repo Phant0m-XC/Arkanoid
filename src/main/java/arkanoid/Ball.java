@@ -46,18 +46,22 @@ public class Ball {
         if (x >= 1250 - size) {
             x = 1250 - size;
             changeDirection(vertical, Direction.LEFT);
+            changeMoveAngle();
         }
         if (x <= 0) {
             x = 0;
             changeDirection(vertical, Direction.RIGHT);
+            changeMoveAngle();
         }
         if (y <= 0) {
             y = 0;
             changeDirection(Direction.DOWN, horizontal);
+            changeMoveAngle();
         }
         if (y >= 900 - size) {
             y = 900 - size;
             changeDirection(Direction.STOP, Direction.STOP);
+            changeMoveAngle();
         }
     }
 
@@ -69,10 +73,10 @@ public class Ball {
     }
 
     //Изменение угла движения
-    /*protected void changeMoveAngle() {
+    protected void changeMoveAngle() {
         speedX = (int) (Math.random() * 100 % 5 + 5);
         speedY = (int) (Math.random() * 100 % 5 + 5);
-    }*/
+    }
 
     public int getX() {
         return x;

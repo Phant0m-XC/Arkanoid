@@ -41,6 +41,11 @@ public class Platform {
         return y;
     }
 
+    public void resetPlatformPosition() {
+        this.x = 550;
+        this.y = 850;
+    }
+
     public int getWidth() {
         return width;
     }

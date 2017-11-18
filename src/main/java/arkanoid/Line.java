@@ -35,11 +35,11 @@ public class Line {
         return y;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return height;
     }
 
-    public int getWidth(){
+    public int getWidth() {
         return width;
     }
 }

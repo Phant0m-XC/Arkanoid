@@ -1,6 +1,10 @@
 package arkanoid;
 
+import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Arkanoid extends Thread {
 
@@ -10,14 +14,20 @@ public class Arkanoid extends Thread {
     private Platform platform;
     private DrawPanel panel;
     private Mapper mapper;
+    private PlaySound playSound;
+    private List<Line> lifeCount;
+    private int dialogButton;
 
-    public Arkanoid(DrawPanel panel, Platform platform, Ball ball, Mapper mapper) {
+    public Arkanoid(DrawPanel panel, Platform platform, Ball ball, Mapper mapper, PlaySound playSound) {
         this.score = 0;
         this.panel = panel;
         this.platform = platform;
         this.ball = ball;
         this.mapper = mapper;
+        this.playSound = playSound;
         gameSpeed = 15;
+        lifeCount = new ArrayList<Line>();
+        addNewLife();
     }
 
     public void draw(Graphics gr) {
@@ -26,7 +36,7 @@ public class Arkanoid extends Thread {
         if (gr instanceof Graphics2D) {
             Graphics2D g2 = (Graphics2D) gr;
             g2.setColor(Color.GREEN);
-            g2.drawString("Очки: " + score, 50, 50);
+            g2.drawString("Очки: " + score, 50, 20);
         }
     }
 
@@ -37,6 +47,7 @@ public class Arkanoid extends Thread {
                 ball.getX() >= platform.getX() - ball.getSize() &&
                 ball.getX() <= platform.getX() + platform.getWidth()) {
             ball.changeDirection(Direction.UP, null);
+            playSound.playSound(Sound.BOARD);
             //ball.changeMoveAngle();
         }
     }
@@ -48,6 +59,7 @@ public class Arkanoid extends Thread {
                     ball.getY() <= mapper.getLines().get(i).getY() &&
                     ball.getX() >= mapper.getLines().get(i).getX() - ball.getSize() &&
                     ball.getX() <= mapper.getLines().get(i).getX() + mapper.getLines().get(i).getWidth()) {
+                playSound.playSound(Sound.NOCK);
                 ball.changeDirection(Direction.UP, null);
                 mapper.getLines().remove(i);
                 score += 10;
@@ -58,6 +70,7 @@ public class Arkanoid extends Thread {
                         ball.getY() >= mapper.getLines().get(i).getY() + mapper.getLines().get(i).getHeight() &&
                         ball.getX() >= mapper.getLines().get(i).getX() - ball.getSize() &&
                         ball.getX() <= mapper.getLines().get(i).getX() + mapper.getLines().get(i).getWidth()) {
+                    playSound.playSound(Sound.NOCK);
                     ball.changeDirection(Direction.DOWN, null);
                     mapper.getLines().remove(i);
                     score += 10;
@@ -68,6 +81,7 @@ public class Arkanoid extends Thread {
                             ball.getX() >= mapper.getLines().get(i).getX() + mapper.getLines().get(i).getWidth() &&
                             ball.getY() >= mapper.getLines().get(i).getY() - ball.getSize() &&
                             ball.getY() <= mapper.getLines().get(i).getY() + mapper.getLines().get(i).getHeight()) {
+                        playSound.playSound(Sound.NOCK);
                         ball.changeDirection(null, Direction.RIGHT);
                         mapper.getLines().remove(i);
                         score += 10;
@@ -78,6 +92,7 @@ public class Arkanoid extends Thread {
                                 ball.getX() <= mapper.getLines().get(i).getX() &&
                                 ball.getY() >= mapper.getLines().get(i).getY() - ball.getSize() &&
                                 ball.getY() <= mapper.getLines().get(i).getY() + mapper.getLines().get(i).getHeight()) {
+                            playSound.playSound(Sound.NOCK);
                             ball.changeDirection(null, Direction.LEFT);
                             mapper.getLines().remove(i);
                             score += 10;
@@ -86,12 +101,58 @@ public class Arkanoid extends Thread {
         }
     }
 
+    private int isWin(){
+        return mapper.getLines().size();
+    }
+
+    private int isDead() {
+        if (ball.getY() == 875) {
+            playSound.playSound(Sound.DEAD);
+            if (lifeCount.size() > 0) {
+                lifeCount.remove(lifeCount.size() - 1);
+                platform.resetPlatformPosition();
+                ball.resetBallPosition(platform.getX() + platform.getWidth() / 2, platform.getY());
+            }
+        }
+        return lifeCount.size();
+    }
+
+    private void addNewLife() {
+        lifeCount.add(new Line(panel, 1020, 15, Color.GREEN));
+        lifeCount.add(new Line(panel, 1080, 15, Color.GREEN));
+        lifeCount.add(new Line(panel, 1140, 15, Color.GREEN));
+    }
+
+    private void resetGame() {
+        score = 0;
+        addNewLife();
+        try {
+            mapper.addMapping();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        platform.resetPlatformPosition();
+        ball.resetBallPosition(platform.getX() + platform.getWidth() / 2, platform.getY());
+    }
+
+    public List<Line> getLifeCount() {
+        return lifeCount;
+    }
+
     @Override
     public void run() {
         while (true) {
             ball.go();
             checkPlatform();
             checkLines();
+            if (isDead() == 0 || isWin() == 0) {
+                dialogButton = JOptionPane.showOptionDialog(null, "Do you want start new game?", "GameOver",
+                        0, JOptionPane.QUESTION_MESSAGE, null, null, null);
+                if (dialogButton == JOptionPane.YES_OPTION)
+                    resetGame();
+                else
+                    break;
+            }
             try {
                 Thread.sleep(gameSpeed);
             } catch (InterruptedException e) {

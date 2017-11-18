@@ -12,12 +12,24 @@ public class Mapper {
 
     private List<Line> lines;
     private Color[] colors;
+    private DrawPanel panel;
 
     public Mapper(DrawPanel panel) throws IOException {
-        colors = new Color[] {Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.PINK,
+        colors = new Color[]{Color.BLUE, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.PINK,
                 Color.RED, Color.YELLOW};
+        this.panel = panel;
         lines = new ArrayList<Line>();
-        File file = new File("K:\\MyProjects\\Java\\41\\arkanoid\\src\\main\\resources\\map.txt");
+        addMapping();
+    }
+
+    public List<Line> getLines() {
+        return lines;
+    }
+
+    public void addMapping() throws IOException {
+        if(lines.size() > 0)
+            lines.clear();
+        File file = new File("src/main/resources/map.txt");
         FileReader mapFileReader = new FileReader(file);
         BufferedReader reader = new BufferedReader(mapFileReader);
         String line;
@@ -31,9 +43,5 @@ public class Mapper {
             }
             numOfLine++;
         }
-    }
-
-    public List<Line> getLines() {
-        return lines;
     }
 }

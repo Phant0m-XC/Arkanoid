@@ -10,10 +10,12 @@ public class Ball {
     private int speedX;
     private int speedY;
     private JPanel panel;
+    private PlaySound playSound;
     public Direction vertical;
     public Direction horizontal;
 
-    public Ball(JPanel panel, int x, int y) {
+
+    public Ball(JPanel panel, int x, int y, PlaySound playSound) {
         size = 25;
         this.panel = panel;
         this.x = x - size;
@@ -22,6 +24,7 @@ public class Ball {
         speedY = 5;
         vertical = Direction.UP;
         horizontal = Direction.RIGHT;
+        this.playSound = playSound;
     }
 
     public void draw(Graphics gr) {
@@ -44,21 +47,25 @@ public class Ball {
 
     private void checkBounds() {
         if (x >= 1250 - size) {
+            playSound.playSound(Sound.BOARD);
             x = 1250 - size;
             changeDirection(vertical, Direction.LEFT);
             changeMoveAngle();
         }
         if (x <= 0) {
+            playSound.playSound(Sound.BOARD);
             x = 0;
             changeDirection(vertical, Direction.RIGHT);
             changeMoveAngle();
         }
         if (y <= 0) {
+            playSound.playSound(Sound.BOARD);
             y = 0;
             changeDirection(Direction.DOWN, horizontal);
             changeMoveAngle();
         }
         if (y >= 900 - size) {
+            playSound.playSound(Sound.BOARD);
             y = 900 - size;
             changeDirection(Direction.STOP, Direction.STOP);
             changeMoveAngle();
@@ -84,6 +91,12 @@ public class Ball {
 
     public int getY() {
         return y;
+    }
+
+    public void resetBallPosition(int x, int y) {
+        changeDirection(Direction.UP, Direction.RIGHT);
+        this.x = x - size;
+        this.y = y - size;
     }
 
     public int getSize() {

@@ -7,7 +7,6 @@ import java.io.File;
 
 public class PlaySound {
 
-    private File start;
     private File nock;
     private File board;
     private File dead;
